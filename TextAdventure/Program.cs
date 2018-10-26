@@ -12,6 +12,8 @@ namespace TextAdventure
 
             engine.RunGame();
 
+            Console.WriteLine("Bye!");
+
             Console.ReadLine();
         }
     }

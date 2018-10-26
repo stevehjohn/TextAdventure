@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TextAdventure.Models
 {
@@ -7,11 +8,15 @@ namespace TextAdventure.Models
         public Coords Coords { get; set; }
         public List<Item> Items { get; set; }
         public bool Accessible { get; set; }
+        public string NonAccessibleDescription { get; set; }
         public string Description { get; set; }
+        public Func<List<Item>, List<Location>, string> Event { get; set; }
+        public bool OneOffEvent;
 
         public Location()
         {
             Items = new List<Item>();
+            Accessible = true;
         }
 
         public Location(int x, int y, string description)
@@ -19,6 +24,7 @@ namespace TextAdventure.Models
             Coords = new Coords(x, y);
             Description = description;
             Items = new List<Item>();
+            Accessible = true;
         }
     }
 }
