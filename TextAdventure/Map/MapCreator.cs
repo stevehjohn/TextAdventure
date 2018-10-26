@@ -14,6 +14,12 @@ namespace TextAdventure.Map
                     Coords = new Coords(0, 0),
                     Accessible = true,
                     Description = "You are in a forest."
+                },
+                new Location
+                {
+                    Coords = new Coords(0, 1),
+                    Accessible = true,
+                    Description = "The trees are thinning out."
                 }
             };
 
