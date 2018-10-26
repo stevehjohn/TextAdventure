@@ -61,8 +61,7 @@ namespace TextAdventure.Map
                         location.Accessible = false;
                         location.NonAccessibleDescription = "You are unable to get across the river.";
                         return "There is a crash and the tree collapses into the river.";
-                    },
-                    OneOffEvent = true
+                    }
                 },
                 new Location
                 {
@@ -75,13 +74,24 @@ namespace TextAdventure.Map
                             Description = "Magic wand"
                         });
                         return "A wizard walks towards you and hands you a magic wand. Then he buggers off.";
-                    },
-                    OneOffEvent = true
+                    }
                 },
                 new Location
                 {
                     Coords = new Coords(-3, 3),
-                    Description = "You are on a castle drawbridge"
+                    Description = "You are on a castle drawbridge."
+                },
+                new Location
+                {
+                    Coords = new Coords(-3, 4),
+                    Description = "You are in an enchanted shrubbery.",
+                    Event = (items, map) =>
+                    {
+                        var location = map.First(l => l.Coords.X == -3 && l.Coords.Y == 3);
+                        location.Accessible = false;
+                        location.NonAccessibleDescription = "The drawbridge is up.";
+                        return "You hear a loud clanking behind you - the castle drawbridge rises swiftly and closes.";
+                    }
                 }
             };
 

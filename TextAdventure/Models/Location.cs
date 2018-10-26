@@ -17,6 +17,7 @@ namespace TextAdventure.Models
         {
             Items = new List<Item>();
             Accessible = true;
+            OneOffEvent = true;
         }
 
         public Location(int x, int y, string description)
@@ -25,6 +26,7 @@ namespace TextAdventure.Models
             Description = description;
             Items = new List<Item>();
             Accessible = true;
+            OneOffEvent = true;
         }
     }
 }
