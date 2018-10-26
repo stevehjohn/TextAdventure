@@ -1,0 +1,23 @@
+﻿using System.Collections.Generic;
+using TextAdventure.Models;
+
+namespace TextAdventure.Map
+{
+    public static class MapCreator
+    {
+        public static List<Location> CreateMap()
+        {
+            var locations = new List<Location>
+            {
+                new Location
+                {
+                    Coords = new Coords(0, 0),
+                    Accessible = true,
+                    Description = "You are in a forest."
+                }
+            };
+
+            return locations;
+        }
+    }
+}
