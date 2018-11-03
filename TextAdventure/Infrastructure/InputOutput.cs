@@ -28,5 +28,10 @@ namespace TextAdventure.Infrastructure
         {
             return Console.ReadLine();
         }
+
+        public void Clear()
+        {
+            Console.Clear();
+        }
     }
 }

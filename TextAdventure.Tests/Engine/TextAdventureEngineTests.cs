@@ -328,6 +328,16 @@ namespace TextAdventure.Tests.Engine
             _inputOutput.Verify(io => io.Write(ConsoleColor.Red, "What do you want to drop?\n", true));
         }
 
+        [Test]
+        public void Clear_calls_method_on_input_output()
+        {
+            SetCommandSequence("clear", "cls");
+
+            _engine.RunGame();
+
+            _inputOutput.Verify(io => io.Clear(), Times.Exactly(2));
+        }
+
         private void SetCommandSequence(params string[] commands)
         {
             _inputOutput.Setup(io => io.Input())

@@ -7,5 +7,7 @@ namespace TextAdventure.Infrastructure
         void Write(ConsoleColor colour, string text, bool newLine = true);
 
         string Input();
+
+        void Clear();
     }
 }

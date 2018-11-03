@@ -143,6 +143,10 @@ namespace TextAdventure.Engine
                 case "help":
                     _inputOutput.Write(ConsoleColor.DarkGreen, "Arm yourself because no-one else here will save you.\n");
                     return false;
+                case "cls":
+                case "clear":
+                    _inputOutput.Clear();
+                    return false;
                 case "exit":
                 case "quit":
                 case "end":
