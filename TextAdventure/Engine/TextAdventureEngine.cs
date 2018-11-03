@@ -31,7 +31,7 @@ namespace TextAdventure.Engine
 
             while (true)
             {
-                _location = _map.First(l => l.Coords.X == _position.X && l.Coords.Y == _position.Y);
+                _location = _map.GetLocation(_position);
 
                 _inputOutput.Write(ConsoleColor.Blue, _location.Description);
 
@@ -211,7 +211,7 @@ namespace TextAdventure.Engine
         {
             reason = null;
 
-            var location = _map.FirstOrDefault(l => l.Coords.X == x && l.Coords.Y == y);
+            var location = _map.GetLocation(x, y);
 
             if (location == null)
             {
@@ -255,12 +255,12 @@ namespace TextAdventure.Engine
 
                 if (result.CoordsToModify != null)
                 {
-                    _map.First(l => l.Coords.X == result.CoordsToModify.X && l.Coords.Y == result.CoordsToModify.Y).Description = result.NewDescription;
+                    _map.GetLocation(result.CoordsToModify).Description = result.NewDescription;
                 }
 
                 if (result.CoordsToMakeAccessible != null)
                 {
-                    _map.First(l => l.Coords.X == result.CoordsToMakeAccessible.X && l.Coords.Y == result.CoordsToMakeAccessible.Y).Accessible = true;
+                    _map.GetLocation(result.CoordsToMakeAccessible).Accessible = true;
                 }
 
                 _inputOutput.Write(ConsoleColor.Cyan, $"{result.ActionDescription}\n");

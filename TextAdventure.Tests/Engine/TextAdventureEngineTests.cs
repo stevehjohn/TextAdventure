@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TextAdventure.Engine;
+using TextAdventure.Extensions;
 using TextAdventure.Infrastructure;
 using TextAdventure.Models;
 
@@ -49,7 +50,7 @@ namespace TextAdventure.Tests.Engine
         {
             SetCommandSequence("take axe", "go north", "drop axe");
 
-            _map.First(l => l.Coords.X == 0 && l.Coords.Y == 0)
+            _map.GetLocation(0, 0)
                 .Items = new List<Item>
                          {
                              new Item
@@ -60,7 +61,7 @@ namespace TextAdventure.Tests.Engine
 
             _engine.RunGame();
 
-            Assert.True(_map.First(l => l.Coords.X == 0 && l.Coords.Y == 1).Items.Any(i => i.Description == "Axe"));
+            Assert.True(_map.GetLocation(0, 1).Items.Any(i => i.Description == "Axe"));
 
             _inputOutput.Verify(io => io.Write(ConsoleColor.Cyan, "\nYou are carrying:", true));
             _inputOutput.Verify(io => io.Write(ConsoleColor.Green, "Axe", true));
@@ -71,7 +72,7 @@ namespace TextAdventure.Tests.Engine
         {
             SetCommandSequence("go north");
 
-            _map.First(l => l.Coords.X == 0 && l.Coords.Y == 1)
+            _map.GetLocation(0, 1)
                 .Event = (items, locations) => "Something explodes!";
 
             _engine.RunGame();
@@ -92,7 +93,7 @@ namespace TextAdventure.Tests.Engine
         [Test]
         public void Gives_a_reason_location_cannot_be_reached()
         {
-            var location = _map.First(l => l.Coords.X == 0 && l.Coords.Y == 1);
+            var location = _map.GetLocation(0, 1);
             location.Accessible = false;
             location.NonAccessibleDescription = "There is no way to cross the river.";
 
@@ -106,7 +107,7 @@ namespace TextAdventure.Tests.Engine
         [Test]
         public void Describe_repeats_location_description()
         {
-            _map.First(l => l.Coords.X == 0 && l.Coords.Y == 0).Description = "You are at the start of an adventure.";
+            _map.GetLocation(0, 0).Description = "You are at the start of an adventure.";
 
             SetCommandSequence("describe");
 
@@ -139,7 +140,7 @@ namespace TextAdventure.Tests.Engine
         [Test]
         public void Items_cannot_exceed_usage_count()
         {
-            _map.First(l => l.Coords.X == 0 && l.Coords.Y == 0)
+            _map.GetLocation(0, 0)
                 .Items
                 .Add(new Item
                      {
@@ -167,7 +168,7 @@ namespace TextAdventure.Tests.Engine
         [Test]
         public void Using_item_modifies_location_description()
         {
-            var location = _map.First(l => l.Coords.X == 0 && l.Coords.Y == 0);
+            var location = _map.GetLocation(0, 0);
             location.Description = "There is a tree.";
             location.Items.Add(new Item
                                {
@@ -189,7 +190,7 @@ namespace TextAdventure.Tests.Engine
             _engine.RunGame();
 
             _inputOutput.Verify(io => io.Write(ConsoleColor.Blue, "There is a tree.", true));
-            Assert.That(_map.First(l => l.Coords.X == 0 && l.Coords.Y == 0).Description, Is.EqualTo("There is a felled tree."));
+            Assert.That(_map.GetLocation(0, 0).Description, Is.EqualTo("There is a felled tree."));
         }
 
         [Test]
@@ -225,7 +226,7 @@ namespace TextAdventure.Tests.Engine
         [Test]
         public void Cannot_use_item_everywhere()
         {
-            _map.First(l => l.Coords.X == 0 && l.Coords.Y == 0)
+            _map.GetLocation(0, 0)
                 .Items
                 .Add(new Item
                      {
@@ -246,7 +247,7 @@ namespace TextAdventure.Tests.Engine
         [Test]
         public void Using_item_outputs_description_of_action()
         {
-            _map.First(l => l.Coords.X == 0 && l.Coords.Y == 0)
+            _map.GetLocation(0, 0)
                 .Items
                 .Add(new Item
                      {
@@ -271,10 +272,10 @@ namespace TextAdventure.Tests.Engine
         [Test]
         public void Using_item_makes_location_accessible()
         {
-            _map.First(l => l.Coords.X == 0 && l.Coords.Y == 1)
+            _map.GetLocation(0, 1)
                 .Accessible = false;
 
-            _map.First(l => l.Coords.X == 0 && l.Coords.Y == 0)
+            _map.GetLocation(0, 0)
                 .Items
                 .Add(new Item
                      {
@@ -294,7 +295,7 @@ namespace TextAdventure.Tests.Engine
 
             _engine.RunGame();
 
-            Assert.True(_map.First(l => l.Coords.X == 0 && l.Coords.Y == 1).Accessible);
+            Assert.True(_map.GetLocation(0, 1).Accessible);
         }
 
         [Test]
