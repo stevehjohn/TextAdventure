@@ -19,14 +19,5 @@ namespace TextAdventure.Models
             Accessible = true;
             OneOffEvent = true;
         }
-
-        public Location(int x, int y, string description)
-        {
-            Coords = new Coords(x, y);
-            Description = description;
-            Items = new List<Item>();
-            Accessible = true;
-            OneOffEvent = true;
-        }
     }
 }

@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using TextAdventure.Infrastructure;
 using TextAdventure.Models;
 
 namespace TextAdventure.Engine
 {
     public class TextAdventureEngine
     {
+        private readonly IOutput _output;
         private readonly List<Location> _map;
         private readonly List<Item> _items;
 
         private Coords _position;
         private Location _location;
 
-        public TextAdventureEngine(List<Location> map)
+        public TextAdventureEngine(IOutput output, List<Location> map)
         {
+            _output = output;
             _map = map;
             _items = new List<Item>();
         }
 
         public void RunGame()
         {
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Output("Simple text adventure engine by Stevö John.\n");
+            _output.Write(ConsoleColor.DarkGray, "Simple text adventure engine by Stevö John.\n");
 
             _position = new Coords(0, 0);
 
@@ -31,14 +32,11 @@ namespace TextAdventure.Engine
             {
                 _location = _map.First(l => l.Coords.X == _position.X && l.Coords.Y == _position.Y);
 
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Output(_location.Description);
+                _output.Write(ConsoleColor.Blue, _location.Description);
 
                 if (_location.Event != null)
                 {
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine();
-                    Output(_location.Event.Invoke(_items, _map));
+                    _output.Write(ConsoleColor.White, $"\n{_location.Event.Invoke(_items, _map)}");
 
                     if (_location.OneOffEvent)
                     {
@@ -48,25 +46,21 @@ namespace TextAdventure.Engine
 
                 if (_location.Items.Count > 0)
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Output("\nItems in the area:");
+                    _output.Write(ConsoleColor.Cyan, "\nItems in the area:");
 
-                    Console.ForegroundColor = ConsoleColor.Green;
                     foreach (var item in _location.Items)
                     {
-                        Output(item.Description);
+                        _output.Write(ConsoleColor.Green, item.Description);
                     }
                 }
 
                 if (_items.Count > 0)
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Output("\nYou are carrying:");
+                    _output.Write(ConsoleColor.Cyan, "\nYou are carrying:");
 
-                    Console.ForegroundColor = ConsoleColor.Green;
                     foreach (var item in _items)
                     {
-                        Output(item.Description);
+                        _output.Write(ConsoleColor.Green, item.Description);
                     }
                 }
 
@@ -91,18 +85,6 @@ namespace TextAdventure.Engine
             }
         }
 
-        private static void Output(string text)
-        {
-            Console.CursorVisible = false;
-            foreach (var character in text)
-            {
-                Console.Write(character);
-                Thread.Sleep(10);
-            }
-            Console.WriteLine();
-            Console.CursorVisible = true;
-        }
-
         private static string Input()
         {
             return Console.ReadLine();
@@ -123,8 +105,7 @@ namespace TextAdventure.Engine
                     }
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Output("Go where exactly?\n");
+                        _output.Write(ConsoleColor.Red, "Go where exactly?\n");
                     }
                     return false;
                 case "take":
@@ -154,8 +135,7 @@ namespace TextAdventure.Engine
                 case "where":
                     return false;
                 case "help":
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Output("There is no help here my friend.\n");
+                    _output.Write(ConsoleColor.DarkGreen, "Arm yourself because no-one else here will save you.\n");
                     return false;
                 case "exit":
                 case "quit":
@@ -164,8 +144,7 @@ namespace TextAdventure.Engine
                     return true;
             }
 
-            Console.ForegroundColor = ConsoleColor.Red;
-            Output($"I don't know how to {command}.\n");
+            _output.Write(ConsoleColor.Red, $"I don't know how to {command}.\n");
 
             return false;
         }
@@ -174,8 +153,7 @@ namespace TextAdventure.Engine
         {
             if (string.IsNullOrWhiteSpace(direction))
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Output("Go where exactly?\n");
+                _output.Write(ConsoleColor.Red, "Go where exactly?\n");
             }
 
             var dx = 0;
@@ -201,11 +179,9 @@ namespace TextAdventure.Engine
                     break;
             }
 
-            Console.ForegroundColor = ConsoleColor.Red;
-
             if (dx == 0 && dy == 0)
             {
-                Output($"I can't move in the direction {direction}.\n");
+                _output.Write(ConsoleColor.Red, $"I can't move in the direction {direction}.\n");
                 return;
             }
 
@@ -218,11 +194,11 @@ namespace TextAdventure.Engine
 
             if (string.IsNullOrWhiteSpace(reason))
             {
-                Output($"I can't move in the direction {direction}.\n");
+                _output.Write(ConsoleColor.Red, $"I can't move in the direction {direction}.\n");
                 return;
             }
 
-            Output($"{reason}\n");
+            _output.Write(ConsoleColor.Red, $"{reason}\n");
         }
 
         private bool CheckMove(int x, int y, out string reason)
@@ -247,16 +223,14 @@ namespace TextAdventure.Engine
 
             if (item == null)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Output($"There is no {description.ToLower()} here.\n");
+                _output.Write(ConsoleColor.Red, $"There is no {description.ToLower()} here.\n");
                 return;
             }
 
             _items.Add(item);
             _location.Items.Remove(item);
 
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Output($"You take the {item.Description.ToLower()}.\n");
+            _output.Write(ConsoleColor.Magenta, $"You take the {item.Description.ToLower()}.\n");
         }
 
         private void Use(string description)
@@ -265,8 +239,7 @@ namespace TextAdventure.Engine
 
             if (item == null)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Output($"You aren't carrying a {description.ToLower()}.\n");
+                _output.Write(ConsoleColor.Red, $"You aren't carrying a {description.ToLower()}.\n");
                 return;
             }
 
@@ -281,13 +254,11 @@ namespace TextAdventure.Engine
                 }
 
 
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Output($"{result.ActionDescription}\n");
+                _output.Write(ConsoleColor.Cyan, $"{result.ActionDescription}\n");
                 return;
             }
 
-            Console.ForegroundColor = ConsoleColor.Red;
-            Output($"The {item.Description} can't be used here.\n");
+            _output.Write(ConsoleColor.Red, $"The {item.Description} can't be used here.\n");
         }
 
         private void Drop(string description)
@@ -296,16 +267,14 @@ namespace TextAdventure.Engine
 
             if (item == null)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Output($"You aren't carrying a {description.ToLower()}\n");
+                _output.Write(ConsoleColor.Red, $"You aren't carrying a {description.ToLower()}\n");
                 return;
             }
 
             _location.Items.Add(item);
             _items.Remove(item);
 
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Output($"You drop the {item.Description.ToLower()}\n");
+            _output.Write(ConsoleColor.Magenta, $"You drop the {item.Description.ToLower()}\n");
         }
     }
 }
