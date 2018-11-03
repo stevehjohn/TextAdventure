@@ -40,7 +40,13 @@ namespace TextAdventure.Tests.Engine
                         .Returns(() =>
                         {
                             count++;
-                            return count == 1 ? instruction : "bye";
+                            switch (count)
+                            {
+                                case 1:
+                                    return instruction;
+                                default:
+                                    return "bye";
+                            }
                         });
 
             _engine.RunGame();
@@ -70,9 +76,44 @@ namespace TextAdventure.Tests.Engine
                             }
                         });
 
+            _map.First(l => l.Coords.X == 0 && l.Coords.Y == 1)
+                .Items = new List<Item>
+                         {
+                             new Item
+                             {
+                                 Description = "Axe"
+                             }
+                         };
+
             _engine.RunGame();
 
             Assert.True(_map.First(l => l.Coords.X == 0 && l.Coords.Y == 1).Items.Any(i => i.Description == "Axe"));
+        }
+
+        [Test]
+        public void Events_fire()
+        {
+            var count = 0;
+
+            _inputOutput.Setup(io => io.Input())
+                        .Returns(() =>
+                        {
+                            count++;
+                            switch (count)
+                            {
+                                case 1:
+                                    return "go north";
+                                default:
+                                    return "bye";
+                            }
+                        });
+
+            _map.First(l => l.Coords.X == 0 && l.Coords.Y == 1)
+                .Event = (items, locations) => "Something explodes!";
+
+            _engine.RunGame();
+
+            _inputOutput.Verify(io => io.Write(ConsoleColor.White, "\nSomething explodes!", true));
         }
 
         private static List<Location> GetBasicMap()
@@ -82,14 +123,7 @@ namespace TextAdventure.Tests.Engine
                 new Location
                 {
                     Coords = new Coords(0, 0),
-                    Description = "Start",
-                    Items = new List<Item>
-                    {
-                        new Item
-                        {
-                            Description = "Axe"
-                        }
-                    }
+                    Description = "Start"
                 },
                 new Location
                 {
