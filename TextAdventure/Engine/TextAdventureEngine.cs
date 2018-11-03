@@ -8,23 +8,23 @@ namespace TextAdventure.Engine
 {
     public class TextAdventureEngine
     {
-        private readonly IOutput _output;
+        private readonly IInputOutput _inputOutput;
         private readonly List<Location> _map;
         private readonly List<Item> _items;
 
         private Coords _position;
         private Location _location;
 
-        public TextAdventureEngine(IOutput output, List<Location> map)
+        public TextAdventureEngine(IInputOutput inputOutput, List<Location> map)
         {
-            _output = output;
+            _inputOutput = inputOutput;
             _map = map;
             _items = new List<Item>();
         }
 
         public void RunGame()
         {
-            _output.Write(ConsoleColor.DarkGray, "Simple text adventure engine by Stevö John.\n");
+            _inputOutput.Write(ConsoleColor.DarkGray, "Simple text adventure engine by Stevö John.\n");
 
             _position = new Coords(0, 0);
 
@@ -32,11 +32,11 @@ namespace TextAdventure.Engine
             {
                 _location = _map.First(l => l.Coords.X == _position.X && l.Coords.Y == _position.Y);
 
-                _output.Write(ConsoleColor.Blue, _location.Description);
+                _inputOutput.Write(ConsoleColor.Blue, _location.Description);
 
                 if (_location.Event != null)
                 {
-                    _output.Write(ConsoleColor.White, $"\n{_location.Event.Invoke(_items, _map)}");
+                    _inputOutput.Write(ConsoleColor.White, $"\n{_location.Event.Invoke(_items, _map)}");
 
                     if (_location.OneOffEvent)
                     {
@@ -46,48 +46,41 @@ namespace TextAdventure.Engine
 
                 if (_location.Items.Count > 0)
                 {
-                    _output.Write(ConsoleColor.Cyan, "\nItems in the area:");
+                    _inputOutput.Write(ConsoleColor.Cyan, "\nItems in the area:");
 
                     foreach (var item in _location.Items)
                     {
-                        _output.Write(ConsoleColor.Green, item.Description);
+                        _inputOutput.Write(ConsoleColor.Green, item.Description);
                     }
                 }
 
                 if (_items.Count > 0)
                 {
-                    _output.Write(ConsoleColor.Cyan, "\nYou are carrying:");
+                    _inputOutput.Write(ConsoleColor.Cyan, "\nYou are carrying:");
 
                     foreach (var item in _items)
                     {
-                        _output.Write(ConsoleColor.Green, item.Description);
+                        _inputOutput.Write(ConsoleColor.Green, item.Description);
                     }
                 }
 
                 string command;
 
-                Console.WriteLine();
-
-                Console.ForegroundColor = ConsoleColor.Yellow;
+                _inputOutput.Write(ConsoleColor.Yellow, string.Empty);
 
                 do
                 {
-                    Console.Write("> ");
-                    command = Input();
+                    _inputOutput.Write(ConsoleColor.Yellow, "> ", false);
+                    command = _inputOutput.Input();
                 } while (string.IsNullOrWhiteSpace(command));
 
-                Console.WriteLine();
+                _inputOutput.Write(ConsoleColor.Yellow, string.Empty);
 
                 if (Do(command))
                 {
                     break;
                 }
             }
-        }
-
-        private static string Input()
-        {
-            return Console.ReadLine();
         }
 
         private bool Do(string command)
@@ -105,7 +98,7 @@ namespace TextAdventure.Engine
                     }
                     else
                     {
-                        _output.Write(ConsoleColor.Red, "Go where exactly?\n");
+                        _inputOutput.Write(ConsoleColor.Red, "Go where exactly?\n");
                     }
                     return false;
                 case "take":
@@ -135,7 +128,7 @@ namespace TextAdventure.Engine
                 case "where":
                     return false;
                 case "help":
-                    _output.Write(ConsoleColor.DarkGreen, "Arm yourself because no-one else here will save you.\n");
+                    _inputOutput.Write(ConsoleColor.DarkGreen, "Arm yourself because no-one else here will save you.\n");
                     return false;
                 case "exit":
                 case "quit":
@@ -144,7 +137,7 @@ namespace TextAdventure.Engine
                     return true;
             }
 
-            _output.Write(ConsoleColor.Red, $"I don't know how to {command}.\n");
+            _inputOutput.Write(ConsoleColor.Red, $"I don't know how to {command}.\n");
 
             return false;
         }
@@ -153,7 +146,7 @@ namespace TextAdventure.Engine
         {
             if (string.IsNullOrWhiteSpace(direction))
             {
-                _output.Write(ConsoleColor.Red, "Go where exactly?\n");
+                _inputOutput.Write(ConsoleColor.Red, "Go where exactly?\n");
             }
 
             var dx = 0;
@@ -181,7 +174,7 @@ namespace TextAdventure.Engine
 
             if (dx == 0 && dy == 0)
             {
-                _output.Write(ConsoleColor.Red, $"I can't move in the direction {direction}.\n");
+                _inputOutput.Write(ConsoleColor.Red, $"I can't move in the direction {direction}.\n");
                 return;
             }
 
@@ -194,11 +187,11 @@ namespace TextAdventure.Engine
 
             if (string.IsNullOrWhiteSpace(reason))
             {
-                _output.Write(ConsoleColor.Red, $"I can't move in the direction {direction}.\n");
+                _inputOutput.Write(ConsoleColor.Red, $"I can't move in the direction {direction}.\n");
                 return;
             }
 
-            _output.Write(ConsoleColor.Red, $"{reason}\n");
+            _inputOutput.Write(ConsoleColor.Red, $"{reason}\n");
         }
 
         private bool CheckMove(int x, int y, out string reason)
@@ -223,14 +216,14 @@ namespace TextAdventure.Engine
 
             if (item == null)
             {
-                _output.Write(ConsoleColor.Red, $"There is no {description.ToLower()} here.\n");
+                _inputOutput.Write(ConsoleColor.Red, $"There is no {description.ToLower()} here.\n");
                 return;
             }
 
             _items.Add(item);
             _location.Items.Remove(item);
 
-            _output.Write(ConsoleColor.Magenta, $"You take the {item.Description.ToLower()}.\n");
+            _inputOutput.Write(ConsoleColor.Magenta, $"You take the {item.Description.ToLower()}.\n");
         }
 
         private void Use(string description)
@@ -239,7 +232,7 @@ namespace TextAdventure.Engine
 
             if (item == null)
             {
-                _output.Write(ConsoleColor.Red, $"You aren't carrying a {description.ToLower()}.\n");
+                _inputOutput.Write(ConsoleColor.Red, $"You aren't carrying a {description.ToLower()}.\n");
                 return;
             }
 
@@ -254,11 +247,11 @@ namespace TextAdventure.Engine
                 }
 
 
-                _output.Write(ConsoleColor.Cyan, $"{result.ActionDescription}\n");
+                _inputOutput.Write(ConsoleColor.Cyan, $"{result.ActionDescription}\n");
                 return;
             }
 
-            _output.Write(ConsoleColor.Red, $"The {item.Description} can't be used here.\n");
+            _inputOutput.Write(ConsoleColor.Red, $"The {item.Description} can't be used here.\n");
         }
 
         private void Drop(string description)
@@ -267,14 +260,14 @@ namespace TextAdventure.Engine
 
             if (item == null)
             {
-                _output.Write(ConsoleColor.Red, $"You aren't carrying a {description.ToLower()}\n");
+                _inputOutput.Write(ConsoleColor.Red, $"You aren't carrying a {description.ToLower()}\n");
                 return;
             }
 
             _location.Items.Add(item);
             _items.Remove(item);
 
-            _output.Write(ConsoleColor.Magenta, $"You drop the {item.Description.ToLower()}\n");
+            _inputOutput.Write(ConsoleColor.Magenta, $"You drop the {item.Description.ToLower()}\n");
         }
     }
 }

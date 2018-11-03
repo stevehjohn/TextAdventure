@@ -9,7 +9,7 @@ namespace TextAdventure
     {
         private static void Main()
         {
-            var engine = new TextAdventureEngine(new Output(), MapCreator.CreateMap());
+            var engine = new TextAdventureEngine(new InputOutput(), MapCreator.CreateMap());
 
             engine.RunGame();
 
