@@ -26,6 +26,8 @@ namespace TextAdventure.Tests.Engine
         [TestCase("go south", "South")]
         [TestCase("go east", "East")]
         [TestCase("go west", "West")]
+        [TestCase("move north", "North")]
+        [TestCase("head north", "North")]
         public void Interprets_move_instructions_correctly(string instruction, string expected)
         {
             var count = 0;
