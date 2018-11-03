@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TextAdventure.Extensions;
 using TextAdventure.Infrastructure;
 using TextAdventure.Models;
 
@@ -108,21 +109,33 @@ namespace TextAdventure.Engine
                         Take(parts[1]);
                         return false;
                     }
-                    break;
+                    else
+                    {
+                        _inputOutput.Write(ConsoleColor.Red, "What do you want to pickup?\n");
+                    }
+                    return false;
                 case "use":
                     if (parts.Length > 1)
                     {
                         Use(parts[1]);
                         return false;
                     }
-                    break;
+                    else
+                    {
+                        _inputOutput.Write(ConsoleColor.Red, "What do you want to use?\n");
+                    }
+                    return false;
                 case "drop":
                     if (parts.Length > 1)
                     {
                         Drop(parts[1]);
                         return false;
                     }
-                    break;
+                    else
+                    {
+                        _inputOutput.Write(ConsoleColor.Red, "What do you want to drop?\n");
+                    }
+                    return false;
                 case "desc":
                 case "describe":
                 case "where":
@@ -232,7 +245,7 @@ namespace TextAdventure.Engine
 
             if (item == null)
             {
-                _inputOutput.Write(ConsoleColor.Red, $"You aren't carrying a {description.ToLower()}.\n");
+                _inputOutput.Write(ConsoleColor.Red, $"You aren't carrying {description.ToLower().PrependDeterminer()}.\n");
                 return;
             }
 
@@ -240,18 +253,29 @@ namespace TextAdventure.Engine
             {
                 var result = item.Action.Invoke(_position);
 
-                _map.First(l => l.Coords.X == result.CoordsToModify.X && l.Coords.Y == result.CoordsToModify.Y).Description = result.NewDescription;
+                if (result.CoordsToModify != null)
+                {
+                    _map.First(l => l.Coords.X == result.CoordsToModify.X && l.Coords.Y == result.CoordsToModify.Y).Description = result.NewDescription;
+                }
+
                 if (result.CoordsToMakeAccessible != null)
                 {
                     _map.First(l => l.Coords.X == result.CoordsToMakeAccessible.X && l.Coords.Y == result.CoordsToMakeAccessible.Y).Accessible = true;
                 }
 
-
                 _inputOutput.Write(ConsoleColor.Cyan, $"{result.ActionDescription}\n");
+
+                item.Uses--;
+                if (item.Uses == 0)
+                {
+                    _inputOutput.Write(ConsoleColor.Red, $"{item.LastUseResponse}\n");
+                    _inputOutput.Write(ConsoleColor.Magenta, $"You drop the {item.Description.ToLower()}.\n");
+                }
+
                 return;
             }
 
-            _inputOutput.Write(ConsoleColor.Red, $"The {item.Description} can't be used here.\n");
+            _inputOutput.Write(ConsoleColor.Red, $"The {item.Description.ToLower()} can't be used here.\n");
         }
 
         private void Drop(string description)
@@ -260,14 +284,14 @@ namespace TextAdventure.Engine
 
             if (item == null)
             {
-                _inputOutput.Write(ConsoleColor.Red, $"You aren't carrying a {description.ToLower()}\n");
+                _inputOutput.Write(ConsoleColor.Red, $"You aren't carrying {description.ToLower().PrependDeterminer()}.\n");
                 return;
             }
 
             _location.Items.Add(item);
             _items.Remove(item);
 
-            _inputOutput.Write(ConsoleColor.Magenta, $"You drop the {item.Description.ToLower()}\n");
+            _inputOutput.Write(ConsoleColor.Magenta, $"You drop the {item.Description.ToLower()}.\n");
         }
     }
 }

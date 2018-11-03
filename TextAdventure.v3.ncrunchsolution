@@ -1,6 +1,11 @@
 ﻿<SolutionConfiguration>
   <Settings>
     <AllowParallelTestExecution>False</AllowParallelTestExecution>
+    <MetricsExclusionList>
+      <Value>TextAdventure\TextAdventure.csproj\Infrastructure</Value>
+      <Value>TextAdventure\TextAdventure.csproj\Map</Value>
+      <Value>Program.cs:TextAdventure\TextAdventure.csproj</Value>
+    </MetricsExclusionList>
     <SolutionConfigured>True</SolutionConfigured>
   </Settings>
 </SolutionConfiguration>

@@ -8,7 +8,8 @@ namespace TextAdventure.Models
         public string Description { get; set; }
         public Func<Coords, ItemUseResult> Action { get; set; }
         public List<Coords> LocationsCanBeUsed { get; set;  }
-        public bool SingleUse { get; set; }
+        public int Uses { get; set; }
+        public string LastUseResponse { get; set; }
 
         public Item()
         {

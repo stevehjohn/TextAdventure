@@ -33,7 +33,7 @@ namespace TextAdventure.Map
                             {
                                 new Coords(-1, 2)
                             },
-                            SingleUse = false,
+                            Uses = int.MaxValue,
                             Action = c => new ItemUseResult
                             {
                                 CoordsToModify = new Coords(-1, 2),
