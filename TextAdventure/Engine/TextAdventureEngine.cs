@@ -152,11 +152,10 @@ namespace TextAdventure.Engine
                 case "end":
                 case "bye":
                     return true;
+                default:
+                    _inputOutput.Write(ConsoleColor.Red, $"I don't know how to {command}.\n");
+                    return false;
             }
-
-            _inputOutput.Write(ConsoleColor.Red, $"I don't know how to {command}.\n");
-
-            return false;
         }
 
         private void Move(string direction)
@@ -187,12 +186,9 @@ namespace TextAdventure.Engine
                 case "w":
                     dx = -1;
                     break;
-            }
-
-            if (dx == 0 && dy == 0)
-            {
-                _inputOutput.Write(ConsoleColor.Red, $"I can't move in the direction {direction}.\n");
-                return;
+                default:
+                    _inputOutput.Write(ConsoleColor.Red, $"I can't move in the direction {direction}.\n");
+                    return;
             }
 
             if (CheckMove(_position.X + dx, _position.Y + dy, out var reason))
