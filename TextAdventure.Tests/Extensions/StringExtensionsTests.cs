@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using TextAdventure.Extensions;
 // ReSharper disable StringLiteralTypo
 
@@ -42,6 +43,7 @@ namespace TextAdventure.Tests.Extensions
         [TestCase("quit", "Q300")]
         [TestCase("end", "E530")]
         [TestCase("bye", "B000")]
+        [TestCase("internationalization", "I536")]
         public void Soundex_produces_expected_codes(string word, string expected)
         {
             Assert.That(word.ToSoundex(), Is.EqualTo(expected));
@@ -55,6 +57,8 @@ namespace TextAdventure.Tests.Extensions
         [TestCase("pik up", "pickup")]
         [TestCase("pic up", "pickup")]
         [TestCase("steve", "glyn", false)]
+        [TestCase(" ", null)]
+        [TestCase("-", null)]
         public void Soundex_tests(string left, string right, bool isEqual = true)
         {
             if (isEqual)
@@ -72,6 +76,14 @@ namespace TextAdventure.Tests.Extensions
         public void GetLevenshteinDistance_produces_expected_values(string left, string right, int expected)
         {
             Assert.That(left.GetLevenshteinDistance(right), Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void GetLevenshteinDistance_throws_on_invalid_parameters()
+        {
+            Assert.Throws<ArgumentException>(() => " ".GetLevenshteinDistance("stevo"));
+
+            Assert.Throws<ArgumentException>(() => "stevo".GetLevenshteinDistance(" "));
         }
     }
 }

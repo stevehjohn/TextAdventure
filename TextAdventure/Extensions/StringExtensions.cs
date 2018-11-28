@@ -29,14 +29,14 @@ namespace TextAdventure.Extensions
         {
             if (string.IsNullOrWhiteSpace(word))
             {
-                return string.Empty;
+                return null;
             }
 
             word = word.RemoveNonLetters();
 
             if (string.IsNullOrWhiteSpace(word))
             {
-                return string.Empty;
+                return null;
             }
 
             var code = word[0];
