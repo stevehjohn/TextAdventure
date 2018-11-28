@@ -1,4 +1,7 @@
-﻿namespace TextAdventure.Extensions
+﻿using System;
+using System.Linq;
+
+namespace TextAdventure.Extensions
 {
     public static class StringExtensions
     {
@@ -81,6 +84,51 @@
             return $"{code}{word}".ToUpper();
         }
 
+        public static int GetLevenshteinDistance(this string left, string right)
+        {
+            if (string.IsNullOrWhiteSpace(left))
+            {
+                throw new ArgumentException(nameof(left));
+            }
+
+            if (string.IsNullOrWhiteSpace(right))
+            {
+                throw new ArgumentException(nameof(right));
+            }
+
+            left = left.ToLower();
+            right = right.ToLower();
+
+            var matrix = new int[left.Length + 1, right.Length + 1];
+
+            for (var i = 1; i <= left.Length; i++)
+            {
+                matrix[i, 0] = i;
+            }
+
+            for (var i = 1; i <= right.Length; i++)
+            {
+                matrix[0, i] = i;
+            }
+
+            for (var r = 1; r <= right.Length; r++)
+            {
+                for (var l = 1; l <= left.Length; l++)
+                {
+                    var cost = 0;
+
+                    if (left[l - 1] != right[r - 1])
+                    {
+                        cost = 1;
+                    }
+
+                    matrix[l, r] = Min(matrix[l - 1, r] + 1, matrix[l, r - 1] + 1, matrix[l - 1, r - 1] + cost);
+                }
+            }
+
+            return matrix[left.Length, right.Length];
+        }
+
         private static string RemoveNonLetters(this string word)
         {
             var result = string.Empty;
@@ -94,6 +142,11 @@
             }
 
             return result;
+        }
+
+        private static int Min(params int[] values)
+        {
+            return values.Min();
         }
     }
 }

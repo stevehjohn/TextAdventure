@@ -66,5 +66,12 @@ namespace TextAdventure.Tests.Extensions
                 Assert.True(left.ToSoundex() != right.ToSoundex());
             }
         }
+
+        [TestCase("book", "back", 2)]
+        [TestCase("kitten", "sitting", 3)]
+        public void GetLevenshteinDistance_produces_expected_values(string left, string right, int expected)
+        {
+            Assert.That(left.GetLevenshteinDistance(right), Is.EqualTo(expected));
+        }
     }
 }
