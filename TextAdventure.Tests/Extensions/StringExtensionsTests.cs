@@ -43,6 +43,7 @@ namespace TextAdventure.Tests.Extensions
         [TestCase("quit", "Q300")]
         [TestCase("end", "E530")]
         [TestCase("bye", "B000")]
+        [TestCase("options", "O135")]
         [TestCase("internationalization", "I536")]
         public void Soundex_produces_expected_codes(string word, string expected)
         {

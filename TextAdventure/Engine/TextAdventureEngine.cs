@@ -147,6 +147,8 @@ namespace TextAdventure.Engine
                 case "C460": // clear
                     _inputOutput.Clear();
                     return false;
+                //case "O135": // options
+                //    return false;
                 case "E230": // exit
                 case "Q300": // quit
                 case "E530": // end
