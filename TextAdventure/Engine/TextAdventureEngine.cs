@@ -88,11 +88,11 @@ namespace TextAdventure.Engine
         {
             var parts = command.ToLower().Split(" ");
 
-            switch (parts[0])
+            switch (parts[0].ToSoundex())
             {
-                case "move":
-                case "head":
-                case "go":
+                case "M100": // move
+                case "H300": // head
+                case "G000": // go
                     if (parts.Length > 1)
                     {
                         Move(parts[1]);
@@ -102,8 +102,8 @@ namespace TextAdventure.Engine
                         _inputOutput.Write(ConsoleColor.Red, "Go where exactly?\n");
                     }
                     return false;
-                case "take":
-                case "pickup":
+                case "T200": // take
+                case "P210": // pickup
                     if (parts.Length > 1)
                     {
                         Take(parts[1]);
@@ -114,7 +114,7 @@ namespace TextAdventure.Engine
                         _inputOutput.Write(ConsoleColor.Red, "What do you want to pickup?\n");
                     }
                     return false;
-                case "use":
+                case "U200": // use
                     if (parts.Length > 1)
                     {
                         Use(parts[1]);
@@ -125,7 +125,7 @@ namespace TextAdventure.Engine
                         _inputOutput.Write(ConsoleColor.Red, "What do you want to use?\n");
                     }
                     return false;
-                case "drop":
+                case "D610": // drop
                     if (parts.Length > 1)
                     {
                         Drop(parts[1]);
@@ -136,21 +136,21 @@ namespace TextAdventure.Engine
                         _inputOutput.Write(ConsoleColor.Red, "What do you want to drop?\n");
                     }
                     return false;
-                case "desc":
-                case "describe":
-                case "where":
+                case "D200": // desc
+                case "D261": // describe
+                case "W600": // where
                     return false;
-                case "help":
+                case "H410":
                     _inputOutput.Write(ConsoleColor.DarkGreen, "Arm yourself because no-one else here will save you.\n");
                     return false;
-                case "cls":
-                case "clear":
+                case "C420": // cls
+                case "C460": // clear
                     _inputOutput.Clear();
                     return false;
-                case "exit":
-                case "quit":
-                case "end":
-                case "bye":
+                case "E230": // exit
+                case "Q300": // quit
+                case "E530": // end
+                case "B000": // bye
                     return true;
                 default:
                     _inputOutput.Write(ConsoleColor.Red, $"I don't know how to {command}.\n");

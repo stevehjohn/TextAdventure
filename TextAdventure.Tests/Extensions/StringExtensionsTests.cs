@@ -22,24 +22,49 @@ namespace TextAdventure.Tests.Extensions
             Assert.That(string.Empty.PrependDeterminer(), Is.EqualTo(string.Empty));
         }
 
-        [TestCase("Smith", "S530")]
-        [TestCase("Smythe", "S530")]
+        [TestCase("smith", "S530")]
+        [TestCase("smythe", "S530")]
         [TestCase("a", "A000")]
-        [TestCase("a", "A000")]
+        [TestCase("move", "M100")]
+        [TestCase("head", "H300")]
+        [TestCase("go", "G000")]
+        [TestCase("take", "T200")]
+        [TestCase("pickup", "P210")]
+        [TestCase("use", "U200")]
+        [TestCase("drop", "D610")]
+        [TestCase("desc", "D200")]
+        [TestCase("describe", "D261")]
+        [TestCase("where", "W600")]
+        [TestCase("help", "H410")]
+        [TestCase("cls", "C420")]
+        [TestCase("clear", "C460")]
+        [TestCase("exit", "E230")]
+        [TestCase("quit", "Q300")]
+        [TestCase("end", "E530")]
+        [TestCase("bye", "B000")]
         public void Soundex_produces_expected_codes(string word, string expected)
         {
             Assert.That(word.ToSoundex(), Is.EqualTo(expected));
         }
 
-        [TestCase("Smith", "Smythe")]
+        [TestCase("smith", "smythe")]
         [TestCase("move", "mve")]
         [TestCase("take", "tke")]
         [TestCase("take", "tak")]
         [TestCase("pick up", "pickup")]
         [TestCase("pik up", "pickup")]
-        public void Soundex_tests(string left, string right)
+        [TestCase("pic up", "pickup")]
+        [TestCase("steve", "glyn", false)]
+        public void Soundex_tests(string left, string right, bool isEqual = true)
         {
-            Assert.That(left.ToSoundex(), Is.EqualTo(right.ToSoundex()));
+            if (isEqual)
+            {
+                Assert.That(left.ToSoundex(), Is.EqualTo(right.ToSoundex()));
+            }
+            else
+            {
+                Assert.True(left.ToSoundex() != right.ToSoundex());
+            }
         }
     }
 }

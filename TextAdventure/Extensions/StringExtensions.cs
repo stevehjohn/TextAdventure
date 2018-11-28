@@ -56,11 +56,13 @@
                 paired = false;
                 for (var i = 0; i < word.Length - 1; i++)
                 {
-                    if (word[i] == word[i + 1])
+                    if (word[i] != word[i + 1])
                     {
-                        word = word.Remove(i, 1);
-                        paired = true;
+                        continue;
                     }
+
+                    word = word.Remove(i, 1);
+                    paired = true;
                 }
             } while (paired);
 
